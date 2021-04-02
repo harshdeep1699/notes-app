@@ -1,20 +1,27 @@
 import React from 'react'
 import Firebase from 'firebase'
 import fire from '../Firebase';
+import { Link, Redirect } from 'react-router-dom';
+import Spinner from '../Spinner/Spinner';
+
 class Auth extends React.Component
 {
     state={
         uid:'',
         name:'',
         email:'',
-        shouldLogIn:false
+        shouldLogIn:true,
+        loggedOut:false,
+        spinner:false
     }
     componentDidMount=()=>
     {
+  
         const uid= localStorage.getItem("uid")
         console.log(uid)
         if(uid!==null && uid!=="1")
         {
+            this.setState({spinner:true})
             fire.database().ref('users/'+uid+"/email").on('value',(snapshot)=>{
                 const email=snapshot.val()
                 this.setState({uid:uid,email:email,shouldLogIn:false})
@@ -23,13 +30,15 @@ class Auth extends React.Component
                 const name=snapshot.val()
                 this.setState({name:name})
             })
+            this.setState({spinner:false})
         }
         else
         this.setState({shouldLogIn:true})        
     }
 
     onSubmit=()=>
-    {
+    {  
+       this.setState({spinner:true}) 
         var provider = new Firebase.auth.GoogleAuthProvider();
         Firebase.auth()
         .signInWithPopup(provider)
@@ -50,15 +59,20 @@ class Auth extends React.Component
               userName:user.displayName,
               email:user.email
           }
-      )
+      ) 
+      const uid= localStorage.getItem("uid")
+      if(uid!==null && uid!=="1")
+      this.setState({spinner:false})
     }).catch((error) => {
      console.log(error)
   });
 
     }
     onSignout=()=>{
+
+                
         Firebase.auth().signOut().then(() => {
-            console.log("Log out")
+
             this.setState(
                 {
                     uid:'',
@@ -66,7 +80,7 @@ class Auth extends React.Component
                     email:''
                 })
                 localStorage.setItem("uid",1)
-                this.setState({shouldLogIn:true})
+                this.setState({shouldLogIn:true,loggedOut:true})
             
           }).catch((error) => {
             // An error happened.
@@ -76,25 +90,41 @@ class Auth extends React.Component
     render()
     {
         let name=null
+        let login=null
+        let logout=null
+        let redirect=null
+        let spinner=null
+
+
         if(this.state.name!=='' && this.state.name!==null)
         name=<div>
             <p>Welcome {this.state.name}</p>
             <p>Email: {this.state.email}</p>
             </div>
-
-
-        let login=null
+   
         if(this.state.shouldLogIn)
-        login=<button onClick={this.onSubmit}>Login</button>
+            login=<Link onClick={this.onSubmit}>Login</Link>
 
-        let logout=null
         if(!this.state.shouldLogIn && this.state.email!==null && this.state.email!=='')
-        logout=<button onClick={this.onSignout}>Signout</button>
+            logout=<Link onClick={this.onSignout}>Log Out</Link>
+
+        
+        if(this.state.shouldLogIn===false)
+            redirect= <Redirect to='/posts'></Redirect>
+        
+        if(this.state.spinner)
+            spinner=<Spinner></Spinner>
+
+        if(this.state.loggedOut===true)
+        redirect= <Redirect to='/login'></Redirect>
+        
         return (
             <div>
                 {login}
                 {logout}
+                {spinner}
                 {name}
+                {redirect}
             </div>
         )
     }
