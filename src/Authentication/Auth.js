@@ -6,9 +6,27 @@ class Auth extends React.Component
     state={
         uid:'',
         name:'',
-        email:''
+        email:'',
+        shouldLogIn:false
     }
-
+    componentDidMount=()=>
+    {
+        const uid= localStorage.getItem("uid")
+        console.log(uid)
+        if(uid!==null && uid!=="1")
+        {
+            fire.database().ref('users/'+uid+"/email").on('value',(snapshot)=>{
+                const email=snapshot.val()
+                this.setState({uid:uid,email:email,shouldLogIn:false})
+            })
+            fire.database().ref('users/'+uid+"/userName").on('value',(snapshot)=>{
+                const name=snapshot.val()
+                this.setState({name:name})
+            })
+        }
+        else
+        this.setState({shouldLogIn:true})        
+    }
 
     onSubmit=()=>
     {
@@ -25,13 +43,14 @@ class Auth extends React.Component
       var user = result.user;
       // ...
       this.setState({uid:user.uid,name:user.displayName,email:user.email})
+      localStorage.setItem("uid",user.uid)
+      this.setState({shouldLogIn:false})
       fire.database().ref('users/'+user.uid).update(
           {
               userName:user.displayName,
               email:user.email
           }
       )
-      localStorage.setItem('uid',user.uid)
     }).catch((error) => {
      console.log(error)
   });
@@ -47,27 +66,34 @@ class Auth extends React.Component
                     email:''
                 })
                 localStorage.setItem("uid",1)
+                this.setState({shouldLogIn:true})
             
           }).catch((error) => {
             // An error happened.
           });
     }
-    getuid=()=>{
-        return(this.state.uid)
-    }
 
     render()
     {
         let name=null
-        if(this.state.uid!=='')
+        if(this.state.name!=='' && this.state.name!==null)
         name=<div>
             <p>Welcome {this.state.name}</p>
             <p>Email: {this.state.email}</p>
             </div>
+
+
+        let login=null
+        if(this.state.shouldLogIn)
+        login=<button onClick={this.onSubmit}>Login</button>
+
+        let logout=null
+        if(!this.state.shouldLogIn && this.state.email!==null && this.state.email!=='')
+        logout=<button onClick={this.onSignout}>Signout</button>
         return (
             <div>
-                <button onClick={this.onSubmit}>Login</button>
-                <button onClick={this.onSignout}>Signour</button>
+                {login}
+                {logout}
                 {name}
             </div>
         )

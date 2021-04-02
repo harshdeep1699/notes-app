@@ -1,14 +1,17 @@
+import React from 'react';
 import './App.css';
 import Auth from './Authentication/Auth';
 import Post from './Post/Post';
 
-function App() {
-  return (
+class App extends React.Component {
+  render(){
+    return (
     <div className="App">
       <Auth></Auth>
       <Post></Post>
     </div>
   );
+}
 }
 
 export default App;

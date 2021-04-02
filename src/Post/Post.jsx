@@ -66,7 +66,7 @@ class Post extends React.Component
         const uid= localStorage.getItem('uid') || 1
         if(uid===1)
         return console.log("login first")
-        let xyz={'':''}
+        let xyz={}
         fire.database().ref("users/"+uid+"/posts").on('value',(snapshot)=>{
             xyz=snapshot.val()
         })
