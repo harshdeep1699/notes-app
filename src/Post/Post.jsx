@@ -3,7 +3,7 @@ import './Post.css'
 import Axios from 'axios'
 import fire from '../Firebase'
 import PostCard from '../PostCard/PostCard'
-import { Link } from 'react-router-dom'
+import { Link, Redirect, Route } from 'react-router-dom'
 import Spinner from '../Spinner/Spinner'
 class Post extends React.Component
 {
@@ -62,7 +62,7 @@ class Post extends React.Component
         this.setState({spinner:true})
         const uid= localStorage.getItem('uid') || 1
         if(uid===1)
-        return console.log("login first")
+        return
         let xyz={}
         fire.database().ref("users/"+uid+"/posts").on('value',(snapshot)=>{
             xyz=snapshot.val()
@@ -88,16 +88,16 @@ class Post extends React.Component
         let renderCards=null
         let spinner=null
         let invalidPost=null
-        let postGenerator=<h1>Login First</h1>
+        let postGenerator=null
         if((this.state.posts).length!==0)
         renderCards= <PostCard updateArray={this.getPost} postArray={this.state.posts} keys={this.state.keys}></PostCard>
 
         if(localStorage.getItem("uid")!=='1' && localStorage.getItem("uid")!==null )
         postGenerator= <div>
 
-            Title: <input placeholder="Enter title of note" required id='title-field' onChange={this.inputHandler}></input>
+            Title: <input maxLength="15" placeholder="Enter title of note" required id='title-field' onChange={this.inputHandler}></input>
             <br></br>
-            Body: <textarea required placeholder='Enter note description' id='body-field'onChange={this.inputHandler} className="text-area"></textarea><br></br>
+            Body: <textarea maxLength='30' required placeholder='Enter note description' id='body-field'onChange={this.inputHandler} className="text-area"></textarea><br></br>
             <button onClick={this.onSubmitHandler}>Post</button>
             <button onClick={this.getPost}>Get Posts</button>
             </div>
@@ -109,9 +109,8 @@ class Post extends React.Component
         {
             invalidPost=<p1>Enter a post DAa</p1>
         }
-        
         return(
-            <div>
+            <div className='post'>
                 {postGenerator}
                 {spinner}    
                 {invalidPost}

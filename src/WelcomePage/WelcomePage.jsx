@@ -1,10 +1,12 @@
 import { Link, Redirect } from "react-router-dom"
-
+import './WelcomePage.css'
+import welcomePic from './welcome.jpg'
 const WelcomePage=()=>{
     return(
-        <div>
-            Welcome to notes.
-            <Link to='/login'>Lets get Started</Link>
+        <div className="welcomePage">
+            <img className='pic' src={welcomePic}></img>
+            {/* <p className='welcomeText'>Welcome to notes.</p> */}
+            <Link className='link' to='/login'>Go to Notes</Link>
         </div>
     )
 }

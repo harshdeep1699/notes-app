@@ -6,9 +6,9 @@ const PostCardRender=(props)=>{
     return(
 
         <div className='postCard'>
-            <p>{props.postIt.title}</p>
+            <p>Title: {props.postIt.title}</p>
             <p>{props.postIt.post}</p>
-            <button onClick={()=>deletePost(props.keycheck,props.updateArray)}>DONE</button>
+            <button className='doneButton' onClick={()=>deletePost(props.keycheck,props.updateArray)}>DONE</button>
         </div>
     )
 }

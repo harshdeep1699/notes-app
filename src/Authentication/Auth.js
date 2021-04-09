@@ -3,7 +3,8 @@ import Firebase from 'firebase'
 import fire from '../Firebase';
 import { Link, Redirect } from 'react-router-dom';
 import Spinner from '../Spinner/Spinner';
-
+import './Auth.css'
+import google from './google.png'
 class Auth extends React.Component
 {
     state={
@@ -97,13 +98,22 @@ class Auth extends React.Component
 
 
         if(this.state.name!=='' && this.state.name!==null)
-        name=<div>
+        name=<div className='welcomemsg'>
             <p>Welcome {this.state.name}</p>
             <p>Email: {this.state.email}</p>
             </div>
    
         if(this.state.shouldLogIn)
-            login=<Link onClick={this.onSubmit}>Login</Link>
+            login=
+                    <div className='loginPage'>
+                        <p className='loginText'>Lets login first</p>
+                        <Link className="login"
+                        onClick={this.onSubmit}>
+                        <img className='icon' src={google}></img>
+                        Login with Google
+                        </Link>
+                    </div> 
+                    
 
         if(!this.state.shouldLogIn && this.state.email!==null && this.state.email!=='')
             logout=<Link onClick={this.onSignout}>Log Out</Link>
