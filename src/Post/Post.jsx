@@ -12,7 +12,8 @@ class Post extends React.Component
         post:'',
         posts:[],
         keys:[],
-        spinner:false
+        spinner:false,
+        noPost:false
     }
    
     onSubmitHandler=()=>
@@ -26,6 +27,7 @@ class Post extends React.Component
                 post:this.state.post
                 })
                 this.getPost()
+                alert("Note Added successfully")
                 // let xyz={}
                 // fire.database().ref("users/"+uid+"/posts").on('value',(snapshot)=>{
                 //     xyz=snapshot.val()
@@ -42,6 +44,7 @@ class Post extends React.Component
                 // this.setState({keys:Object.keys(xyz),posts:array1,title:'',post:''})
                 
             }
+            else alert("Invalid details")
             this.setState({spinner:false})
         
     }
@@ -76,7 +79,11 @@ class Post extends React.Component
                 let key = len[i]
                 array[i]= xyz[key]
             }
-            this.setState({posts:array,keys:Object.keys(xyz),spinner:false})
+            if(len.length===0)
+            this.setState({noPost:true})
+            else
+            this.setState({noPost:false})
+            this.setState({posts:array,keys:Object.keys(xyz),spinner:false})            
         })
         
         
@@ -94,14 +101,18 @@ class Post extends React.Component
 
         if(localStorage.getItem("uid")!=='1' && localStorage.getItem("uid")!==null )
         postGenerator= <div>
-
-            Title: <input maxLength="15" placeholder="Enter title of note" required id='title-field' onChange={this.inputHandler}></input>
+            <input className='text-area' maxLength="15" placeholder="Enter title of note" required id='title-field' onChange={this.inputHandler}></input>
             <br></br>
-            Body: <textarea maxLength='30' required placeholder='Enter note description' id='body-field'onChange={this.inputHandler} className="text-area"></textarea><br></br>
-            <button onClick={this.onSubmitHandler}>Post</button>
-            <button onClick={this.getPost}>Get Posts</button>
+            <br></br>
+            <textarea maxLength='30' required placeholder='Enter note description' id='body-field'onChange={this.inputHandler} className="text-area"></textarea><br></br>
+            <button type='submit' onClick={this.onSubmitHandler}>Post</button>
+            <button onClick={this.getPost}>Get Notes</button>
             </div>
-
+        else
+        {
+        postGenerator= <Redirect to={{pathname:'/login'}}></Redirect>
+        alert("You must login first")
+        }
         if(this.state.spinner)
         spinner=<Spinner></Spinner>
 
@@ -109,13 +120,22 @@ class Post extends React.Component
         {
             invalidPost=<p1>Enter a post DAa</p1>
         }
+        if(this.state.noPost)
+        renderCards=<p className='noPosts'>No notes for now <span >&#128512;</span></p>
+
         return(
-            <div className='post'>
+            <div className='postPage'>
+                <div className='post'>
                 {postGenerator}
                 {spinner}    
                 {invalidPost}
+                </div>
+                <div className='cards'>
                 {renderCards}
+                </div>
+                
             </div>
+            
         )
     }
 }

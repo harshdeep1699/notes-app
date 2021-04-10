@@ -69,6 +69,11 @@ class Auth extends React.Component
   });
 
     }
+    getPhoneNumberFromUserInput=()=>{
+        return document.getElementsByClassName('mobNumber')
+    }
+
+
     onSignout=()=>{
 
                 
@@ -100,7 +105,6 @@ class Auth extends React.Component
         if(this.state.name!=='' && this.state.name!==null)
         name=<div className='welcomemsg'>
             <p>Welcome {this.state.name}</p>
-            <p>Email: {this.state.email}</p>
             </div>
    
         if(this.state.shouldLogIn)
@@ -114,9 +118,10 @@ class Auth extends React.Component
                         </Link>
                     </div> 
                     
+                    
 
         if(!this.state.shouldLogIn && this.state.email!==null && this.state.email!=='')
-            logout=<Link onClick={this.onSignout}>Log Out</Link>
+            logout=<Link className='logout' onClick={this.onSignout}>Log Out</Link>
 
         
         if(this.state.shouldLogIn===false)
@@ -129,11 +134,11 @@ class Auth extends React.Component
         redirect= <Redirect to='/login'></Redirect>
         
         return (
-            <div>
+            <div className='authPage'>
                 {login}
-                {logout}
                 {spinner}
                 {name}
+                {logout}
                 {redirect}
             </div>
         )
